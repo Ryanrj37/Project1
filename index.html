@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Bird Sound Classifier</title>
+</head>
+<body>
+    <h1>Bird Sound Classifier</h1>
+    
+    <!-- Button to upload an audio file -->
+    <input type="file" accept=".wav" id="audioFile" />
+    <button onclick="uploadAudio()">Upload Audio</button>
+    
+    <br /><br />
+    
+    <!-- Button to classify the uploaded audio -->
+    <button onclick="classifyAudio()">Classify Audio</button>
+    
+    <br /><br />
+    
+    <!-- Display the classification result -->
+    <div id="result"></div>
+
+    <script>
+        // Variables to store audio data and classification result
+        let audioData = null;
+        let classificationResult = null;
+
+        // Function to handle audio file upload
+        function uploadAudio() {
+            const input = document.getElementById("audioFile");
+            const file = input.files[0];
+            if (file) {
+                audioData = file;
+                alert("Audio file uploaded successfully!");
+            } else {
+                alert("Please select an audio file.");
+            }
+        }
+
+        // Function to classify the uploaded audio
+        function classifyAudio() {
+            if (audioData) {
+                // Create a FormData object to send the audio file to the server
+                const formData = new FormData();
+                formData.append("audioFile", audioData);
+
+                // Send a POST request to the server for classification
+                fetch("/classify-audio", {
+                    method: "POST",
+                    body: formData,
+                })
+                    .then((response) => response.json())
+                    .then((data) => {
+                        classificationResult = data.result;
+                        // Display the classification result
+                        document.getElementById("result").innerHTML = `Classification Result: ${classificationResult}`;
+                    })
+                    .catch((error) => {
+                        console.error("Error:", error);
+                    });
+            } else {
+                alert("Please upload an audio file first.");
+            }
+        }
+    </script>
+</body>
+</html>
